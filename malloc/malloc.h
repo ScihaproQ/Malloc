@@ -17,6 +17,7 @@ typedef struct list {
     struct list *next;
     size_t size;
     int empty;
+    //TODO: Padding
 }list;
 
 void *malloc(size_t);

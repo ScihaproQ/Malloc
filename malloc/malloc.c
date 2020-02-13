@@ -10,7 +10,7 @@
 void *malloc(size_t size)
 {
     static void *base = NULL;
-    size_t alloc = to_alloc(size, 1);
+    size_t alloc = to_alloc(size, getpagesize());
     list *spot = NULL;
 
     if (!base) {
