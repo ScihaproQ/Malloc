@@ -21,7 +21,7 @@ typedef struct list {
     struct list *prev;
     size_t size;
     char empty;
-    char _align[24];
+    char _align[32];
 } list;
 
 void *malloc(size_t);

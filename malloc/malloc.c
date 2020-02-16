@@ -56,7 +56,7 @@ void *add_spot(list *last, size_t size)
 
     if (size <= 0 || !last)
         return NULL;
-    new = sbrk(sizeof(list) + alloc);
+    new = sbrk(alloc);
     if (new == (void *) -1)
         return NULL;
     last->next = new;
