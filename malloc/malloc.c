@@ -47,6 +47,10 @@ void *find_spot(list *head, size_t size)
         }
         if (best && best->size > tmp->size)
             best = tmp;
+        if (best && best->size == tmp->size) {
+            best = tmp;
+            break;
+        }
         prev = tmp;
         tmp = tmp->next;
     }
