@@ -12,4 +12,6 @@
 
 void free(void *ptr);
 
+void merge(list *node);
+
 #endif //PSU_2019_MALLOC_FREE_H

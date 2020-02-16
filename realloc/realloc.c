@@ -9,11 +9,14 @@
 
 void *realloc(void *ptr, size_t size)
 {
-    list *tmp = ptr - sizeof(list);
-    if (tmp->size > size)
+    list *node = NULL;
+
+    if (!ptr)
+        return malloc(size);
+    node = (void *) (size_t) ptr - sizeof(list);
+    if (node->size >= size)
         return ptr;
-    else {
-        void *realloced = malloc(sizeof(size));
-        return realloced;
-    }
+    free(ptr);
+    ptr = malloc(size);
+    return ptr;
 }

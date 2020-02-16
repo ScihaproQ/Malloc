@@ -9,55 +9,58 @@
 
 void *malloc(size_t size)
 {
-    static void *base = NULL;
-    size_t alloc = to_alloc(size, getpagesize());
-    list *spot = NULL;
+    static list *head = NULL;
 
-    if (!base) {
-        base = sbrk(sizeof(list));
-        ((list *) base)->size = alloc;
-        ((list *) base)->empty = 0;
-        ((list *) base)->next = NULL;
-        void *tmp = sbrk(alloc);
-        return tmp;
-    } else {
-        spot = find_spot(base, size);
-        return add_spot(spot, alloc);
-    }
+    if (!head) {
+        init_head(&head, size);
+        return (void *) (size_t) head + sizeof(list);
+    } else
+        return find_spot(head, size);
 }
 
-list *find_spot(void *base, size_t size)
+void init_head(list **head, size_t size)
 {
-    list *tmp = ((list *) base);
-    for (; tmp->next; tmp = tmp->next) {
-        if (tmp->size >= size && tmp->empty == 1)
-            return tmp;
+    size_t alloc = ALLOC(size + sizeof(list), 2 * getpagesize());
+
+    (*head) = sbrk(alloc);
+    if ((*head) == (void *) -1) {
+        (*head) = NULL;
+        return;
     }
-    return tmp;
+    (*head)->next = NULL;
+    (*head)->prev = NULL;
+    (*head)->size = alloc;
+    (*head)->empty = false;
 }
 
-void *add_spot(list *node, size_t alloc)
+void *find_spot(list *head, size_t size)
 {
-    void *base = NULL;
+    list *tmp = head;
 
-    if (node->next) {
-        node->empty = 0;
-        base = node + 1;
-        return base;
-    } else {
-        base = sbrk(sizeof(list));
-        ((list *) base)->size = alloc;
-        ((list *) base)->empty = 0;
-        ((list *) base)->next = NULL;
-        void *tmp = sbrk(alloc);
-        node->next = base;
-        return tmp;
+    while (tmp != NULL) {
+        if (tmp->size >= size && tmp->empty) {
+            tmp->empty = false;
+            return (void *) ((size_t) tmp + sizeof(list));
+        }
+        tmp = tmp->next;
     }
+    return add_spot(tmp, size);
 }
 
-long long to_alloc(long long received, long long next)
+void *add_spot(list *last, size_t size)
 {
-    if ((received - next) > 0)
-        return to_alloc(received, next * 2);
-    return next;
+    list *new = NULL;
+    size_t alloc = ALLOC(size + sizeof(list), 2 * getpagesize());
+
+    if (size <= 0 || !last)
+        return NULL;
+    else {
+        new = sbrk(sizeof(list));
+        new->empty = false;
+        new->next = NULL;
+        new->prev = last;
+        new->size = alloc;
+        last->next = new;
+        return sbrk(alloc);
+    }
 }

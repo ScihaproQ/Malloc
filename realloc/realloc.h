@@ -9,6 +9,7 @@
 #define PSU_2019_MALLOC_REALLOC_H
 
 #include "malloc.h"
+#include "free.h"
 
 void *realloc(void *ptr, size_t size);
 
