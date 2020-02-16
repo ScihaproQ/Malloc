@@ -29,22 +29,24 @@ void init_head(list **head, size_t size)
     }
     (*head)->next = NULL;
     (*head)->prev = NULL;
-    (*head)->size = alloc;
+    (*head)->size = alloc - sizeof(list);
     (*head)->empty = false;
 }
 
 void *find_spot(list *head, size_t size)
 {
     list *tmp = head;
+    list *prev = NULL;
 
     while (tmp != NULL) {
         if (tmp->size >= size && tmp->empty) {
             tmp->empty = false;
             return (void *) ((size_t) tmp + sizeof(list));
         }
+        prev = tmp;
         tmp = tmp->next;
     }
-    return add_spot(tmp, size);
+    return add_spot(prev, size);
 }
 
 void *add_spot(list *last, size_t size)
@@ -54,13 +56,13 @@ void *add_spot(list *last, size_t size)
 
     if (size <= 0 || !last)
         return NULL;
-    else {
-        new = sbrk(sizeof(list));
-        new->empty = false;
-        new->next = NULL;
-        new->prev = last;
-        new->size = alloc;
-        last->next = new;
-        return sbrk(alloc);
-    }
+    new = sbrk(sizeof(list) + alloc);
+    if (new == (void *) -1)
+        return NULL;
+    last->next = new;
+    new->empty = false;
+    new->next = NULL;
+    new->prev = last;
+    new->size = alloc - sizeof(list);
+    return (void *) (size_t) new + sizeof(list);
 }

@@ -9,6 +9,7 @@
 #define PSU_2019_MALLOC_REALLOCARRAY_H
 
 #include "malloc.h"
+#include "realloc.h"
 
 void *reallocarray(void *ptr, size_t nmemb, size_t size);
 

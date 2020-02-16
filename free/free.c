@@ -12,22 +12,20 @@ void free(void *ptr)
     list *node = NULL;
     if (!ptr)
         return;
-    node = (void *) (size_t) node - sizeof(list);
+    node = (void *) (size_t) ptr - sizeof(list);
     node->empty = true;
-//    merge(node);
+    merge(node);
 }
 
 void merge(list *node)
 {
     list *first = node;
-    list *last = node;
 
-    if (node->next && node->next->empty) {
-        last = node->next;
-        node->size += last->size;
-    }
+    if (node->next && node->next->empty)
+        node->size += node->next->size;
     if (node->prev && node->prev->empty) {
         first = node->prev;
         first->size += node->size;
     }
+    node = first;
 }
