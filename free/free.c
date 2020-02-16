@@ -19,13 +19,15 @@ void free(void *ptr)
 
 void merge(list *node)
 {
-    list *first = node;
+    list *first = NULL;
 
-    if (node->next && node->next->empty)
+    if (node->next && node->next->empty) {
         node->size += node->next->size;
+        node->next = node->next->next;
+    }
     if (node->prev && node->prev->empty) {
         first = node->prev;
         first->size += node->size;
+        first->next = node->next;
     }
-    node = first;
 }
