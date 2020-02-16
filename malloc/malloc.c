@@ -37,29 +37,16 @@ void *find_spot(list *head, size_t size)
 {
     list *tmp = head;
     list *prev = NULL;
-    list *best = NULL;
 
     while (tmp != NULL) {
         if (tmp->size >= size && tmp->empty) {
-            best = tmp;
-            //tmp->empty = false;
-            //return (void *) ((size_t) tmp + sizeof(list));
-        }
-        if (best && best->size > tmp->size)
-            best = tmp;
-        if (best && best->size == tmp->size) {
-            best = tmp;
-            break;
+            tmp->empty = false;
+            return (void *) ((size_t) tmp + sizeof(list));
         }
         prev = tmp;
         tmp = tmp->next;
     }
-    if (!best)
-        return add_spot(prev, size);
-    else {
-        best->empty = false;
-        return best;
-    }
+    return add_spot(prev, size);
 }
 
 void *add_spot(list *last, size_t size)
